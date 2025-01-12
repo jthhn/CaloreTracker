@@ -6,3 +6,5 @@ myenv/  # Add your virtual environment name here
 # Django database files
 db.sqlite3
 *.sqlite3
+myenv/
+
