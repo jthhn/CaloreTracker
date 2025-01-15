@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tracker',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -123,3 +124,4 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+LOGIN_URL = 'accounts/' # Adjust this to the path of your login view

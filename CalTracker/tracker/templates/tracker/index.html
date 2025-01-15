@@ -5,6 +5,12 @@
 
     </head>
     <body>
+        {% if user.is_authenticated %}
+        <p>User ID: {{ user.id }}</p>
+        <p>User Name: {{ user.username }}</p>
+    {% else %}
+        <p>Not logged in</p>
+    {% endif %}    
         <div class="container">
 
             <div class="row">
