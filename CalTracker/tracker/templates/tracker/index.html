@@ -33,14 +33,15 @@
                         <div class="form-group row">
                         {% csrf_token %}
                         <label class="col-md-2">
-                            <b>Select Food To Add</b>                            
+                        <h6><b>Select Meal To Add</b></h6>                            
                         </label> 
                         <select class="col-md-6 form" name="food_consumed" id="food_consumed">
                             {% for food in foods %}
                             <option value="{{ food.name }}">{{ food.name }}</option>
                             {% endfor %}
                         </select>
-                        <button class="btn btn-success" type="submit">Add</button>
+                        <button class="btn btn-success ml-1" type="submit">Select</button>
+                        <a class="btn btn-warning ml-4" href="{% url 'tracker:add_food' %}">Add Meal</a>
                         </div>
                     </form>
                 </div>
