@@ -23,29 +23,29 @@
                 <div class="col-md-5 ">
                     <form method="POST">
                         {% csrf_token %}
-                        <h2>Add You Meal and it's nutrients</h2>
+                        <h2>Update Your Meal and it's nutrients</h2>
                         <br><br>
 
                         <div class="form-group">
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Your meal name">
+                            <input type="text" class="form-control" id="name" name="name" placeholder="{% food.name %}">
                         </div>
                         <div class="form-group">
-                            <input type="text" class="form-control" id="carbs" name="carbs" placeholder="Carbs in your meal">
+                            <input type="text" class="form-control" id="carbs" name="carbs" placeholder="{% food.carbs %}">
                         </div>
                         <div class="form-group">
-                            <input type="text" class="form-control" id="protein" name="protein" placeholder="Protein in your meal">
+                            <input type="text" class="form-control" id="protein" name="protein" placeholder="{% food.protein %}">
                         </div>
                         <div class="form-group">
-                            <input type="text" class="form-control" id="fat" name="fat" placeholder="Fat in your meal">
+                            <input type="text" class="form-control" id="fat" name="fat" placeholder="{% food.fat %}">
                         </div>
                         <div class="form-group">
-                            <input type="" class="form-control" id="calories" name="calories" placeholder="Calories in your meal">
+                            <input type="" class="form-control" id="calories" name="calories" placeholder="{% food.calories %}">
                         </div>
                         <div class="form-group form-check">
                             <input type="checkbox" class="form-check-input" id="exampleCheck1">
                             <label class="form-check-label" for="exampleCheck1">Use measuring unit as  gram</label>
                         </div>
-                            <button type="submit" class="btn btn-success">Add</button>
+                            <button type="submit" class="btn btn-success">Update</button>
                     </form>
                     {% if messages %}
                         {% for message in messages %}
@@ -58,7 +58,7 @@
                         {% endfor %}
                     {% endif %}
                     <form action="{% url 'tracker:index' %}" method="get">
-                        <button type="submit" class="btn btn-primary">show chart</button>
+                        <button type="submit" class="btn btn-primary">Show chart</button>
                     </form>
                 </div>
             </div>

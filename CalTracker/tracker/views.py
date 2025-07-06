@@ -51,3 +51,38 @@ def add_food(request):
         messages.error(request, 'Try you add proper values.')
     
     return render(request,'tracker/add_food.html')
+
+def update_food(request, food_id):
+    try: 
+        food  = Food.objects.get(id=food_id)
+
+        if request.method == "POST":
+
+            food_name = request.POST.get('name')    
+            carbs_in_food = request.POST.get('carbs')
+            protein_in_food = request.POST.get('protein')
+            fat_in_food = request.POST.get('fat')
+            calories_in_food = request.POST.get('calories')
+
+            # get update  data from fields
+            food.name = food_name
+            food.carbs = carbs_in_food
+            food.protein = protein_in_food
+            food.fat = fat_in_food
+            food.calories = calories_in_food
+
+            # save food nutrients
+            food.save()
+
+            messages.success(request, "Food item updated successfully!")
+
+            return redirect('tracker:update_food', food_id=food.id)
+
+    except Food.DoesNotExist:
+
+        # handle the case if the food item doesn't exist
+        messages.error(request, "Food item not found.")
+        return redirect('tracker:update_food', food_id=food.id)
+
+
+            
