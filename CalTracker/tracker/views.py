@@ -1,20 +1,39 @@
 from django.shortcuts import render, redirect
-from .models import Food, Consume
+from .models import Food, Consume, User_goal
 from django.contrib import messages
 # Create your views here.
 
 def index(request):
-    if request.method == "POST":
-        food_consumed = request.POST.get('food_consumed')
-        consume = Food.objects.get(name=food_consumed)
+    # get all food items
+    foods = Food.objects.all()
+    calorie_goal = User_goal.objects.all()
 
-        consume = Consume(food_consumed=consume)
-        consume.save()
-        foods = Food.objects.all()  
-    else:
-        foods = Food.objects.all()
+    # check if form is submitted
+    if request.method == "POST":
+        # get food name from form
+        food_consumed = request.POST.get('food_consumed')
+
+        try:
+            # fetch the Food object by name
+            consume_food = Food.objects.get(name=food_consumed)
+
+            # create Consume object with selected food
+            consumed = Consume(food_consumed=consume_food)
+            consumed.save()
+
+        except Food.DoesNotExist:
+            # if food is not found in DB
+            messages.error(request, 'Selected food not found. Please choose from the list.')
+
+        except Exception:
+            # handle any other unexpected error
+            messages.error(request, 'An error occurred. Please select your meal properly.')
+
+    # get all consumed food to display
     consumed_food = Consume.objects.all()
-    return render(request,'tracker/index.html',{'foods':foods, 'consumed_food':consumed_food})
+
+    # render the index page with foods and consumed list
+    return render(request, 'tracker/index.html', {'foods': foods, 'consumed_food': consumed_food, 'calorie_goal': calorie_goal})
 
 def delete_consume(request,id):
     consumed_food = Consume.objects.get(id=id)
@@ -52,37 +71,56 @@ def add_food(request):
     
     return render(request,'tracker/add_food.html')
 
-def update_food(request, food_id):
+def update_food(request, id):
     try: 
-        food  = Food.objects.get(id=food_id)
+        food = Food.objects.get(id=id)
 
         if request.method == "POST":
+            # get the action from the submitted form 
+            action = request.POST.get('action')
 
-            food_name = request.POST.get('name')    
-            carbs_in_food = request.POST.get('carbs')
-            protein_in_food = request.POST.get('protein')
-            fat_in_food = request.POST.get('fat')
-            calories_in_food = request.POST.get('calories')
+            if action == 'delete':
+                try:
+                    # delete the food item from database
+                    food.delete()
+                    messages.success(request, "Food item deleted successfully!")
+                    return redirect('/')
+                except:
+                    messages.error(request, "Nothing to delete.")
+                    return redirect('/')
 
-            # get update  data from fields
-            food.name = food_name
-            food.carbs = carbs_in_food
-            food.protein = protein_in_food
-            food.fat = fat_in_food
-            food.calories = calories_in_food
+            elif action == 'update':
+                try:
+                    food_name = request.POST.get('name')    
+                    carbs_in_food = request.POST.get('carbs')
+                    protein_in_food = request.POST.get('protein')
+                    fat_in_food = request.POST.get('fat')
+                    calories_in_food = request.POST.get('calories')
 
-            # save food nutrients
-            food.save()
+                    # update food fields
+                    food.name = food_name
+                    food.carbs = carbs_in_food
+                    food.protein = protein_in_food
+                    food.fat = fat_in_food
+                    food.calories = calories_in_food
 
-            messages.success(request, "Food item updated successfully!")
+                    food.save()
+                    messages.success(request, "Food item updated successfully!")
+                    return redirect('/')
+                except:
+                    messages.error(request, "Add proper values.")
+                    return render(request, 'tracker/update_food.html', {'food': food})
 
-            return redirect('tracker:update_food', food_id=food.id)
+            else:
+                messages.error(request, "Invalid action.")
+                return redirect('/')
+                
+        # GET request — render update form
+        return render(request, 'tracker/update_food.html', {'food': food})
 
     except Food.DoesNotExist:
-
-        # handle the case if the food item doesn't exist
         messages.error(request, "Food item not found.")
-        return redirect('tracker:update_food', food_id=food.id)
+        return redirect('/')
 
 
             

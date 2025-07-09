@@ -17,3 +17,10 @@ class Consume(models.Model):
 
     def __str__(self):
         return f'{self.food_consumed}'
+
+class User_goal(models.Model):
+
+    calorie_goal = (models.IntegerField(default=2000))
+
+    def __str__(self):
+        return f'{self.calorie_goal}'
