@@ -6,8 +6,8 @@ from django.contrib import messages
 def index(request):
     # get all food items
     foods = Food.objects.all()
-    calorie_goal = User_goal.objects.all()
-
+    calorie_goal = User_goal.objects.get(calorie_goal)
+    
     # check if form is submitted
     if request.method == "POST":
         # get food name from form
