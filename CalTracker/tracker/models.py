@@ -27,3 +27,4 @@ class User_goal(models.Model):
 
     def __str__(self):
         return f'{self.user.username}___{self.calorie_goal}'
+    

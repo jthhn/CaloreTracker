@@ -1,13 +1,19 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .models import Food, Consume, User_goal
 from django.contrib import messages
+
 # Create your views here.
 
+
+@login_required(login_url='accounts:login')
 def index(request):
     # get all food items
-    foods = Food.objects.all()
-    calorie_goal = User_goal.objects.get(calorie_goal)
-    
+
+    foods = Food.objects.filter(user=request.user)
+
+    calorie_goal = User_goal.objects.get(user=request.user).calorie_goal
+
     # check if form is submitted
     if request.method == "POST":
         # get food name from form
@@ -15,10 +21,10 @@ def index(request):
 
         try:
             # fetch the Food object by name
-            consume_food = Food.objects.get(name=food_consumed)
+            consume_food = Food.objects.get(user=request.user, name=food_consumed)
 
             # create Consume object with selected food
-            consumed = Consume(food_consumed=consume_food)
+            consumed = Consume(user=request.user, food_consumed=consume_food)
             consumed.save()
 
         except Food.DoesNotExist:
@@ -35,6 +41,7 @@ def index(request):
     # render the index page with foods and consumed list
     return render(request, 'tracker/index.html', {'foods': foods, 'consumed_food': consumed_food, 'calorie_goal': calorie_goal})
 
+@login_required(login_url='accounts:login')
 def delete_consume(request,id):
     consumed_food = Consume.objects.get(id=id)
     if request.method == 'POST':
@@ -42,6 +49,7 @@ def delete_consume(request,id):
        return redirect('/') 
     return render(request,'tracker/delete.html')
 
+@login_required(login_url='accounts:login')
 def add_food(request):
 
     try:
@@ -54,7 +62,8 @@ def add_food(request):
             calories_in_food = request.POST.get('calories')
 
             # create the object
-            food = Food(name=food_name,
+            food = Food(id = request.user,
+                        name=food_name,
                         carbs=carbs_in_food,
                         protein=protein_in_food,
                         fat=fat_in_food,
@@ -71,9 +80,10 @@ def add_food(request):
     
     return render(request,'tracker/add_food.html')
 
+@login_required(login_url='accounts:login')
 def update_food(request, id):
     try: 
-        food = Food.objects.get(id=id)
+        food = Food.objects.filter(id=id, user=request.user).first() #first is used to make the food to a object other wise it return as a list of results 
 
         if request.method == "POST":
             # get the action from the submitted form 
