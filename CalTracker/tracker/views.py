@@ -62,7 +62,7 @@ def add_food(request):
             calories_in_food = request.POST.get('calories')
 
             # create the object
-            food = Food(id = request.user,
+            food = Food(user=request.user,
                         name=food_name,
                         carbs=carbs_in_food,
                         protein=protein_in_food,
