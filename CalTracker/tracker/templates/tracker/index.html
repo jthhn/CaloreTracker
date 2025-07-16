@@ -20,7 +20,11 @@
 
       <br /><br /><br />
 
-      <h4>Calorie Goal</h4>
+      <h4>
+        Calorie Goal:
+        <span id="calorie-goal-text" class="fw-bold">{{ calorie_goal }}</span>
+        <a id="edit-btn" href="{% url 'tracker:calgoal' %}" class="btn btn-sm btn-warning ml-4">Edit</a>
+      </h4>
       <br />
       <div class="row">
         <div class="col-md-9 offset-1">
@@ -41,7 +45,6 @@
         <div class="col-md-12">
           <form method="POST">
             <div class="form-group row">
-          
               {% csrf_token %}
               <label class="col-md-2">
                 <h6><b>Select Meal To Add</b></h6>
@@ -52,7 +55,9 @@
                 id="food_consumed"
               >
                 {% for food in foods %}
-                <option value="{{ food.name }}" data-id="{{ food.id }}">{{ food.name }}</option>
+                <option value="{{ food.name }}" data-id="{{ food.id }}">
+                  {{ food.name }}
+                </option>
                 {% endfor %}
               </select>
               <button class="btn btn-success ml-1" type="submit">Select</button>
@@ -63,7 +68,7 @@
                 href="#"
               >
                 Update Meal
-            </a>
+              </a>
               <a
                 class="btn btn-warning ml-4"
                 href="{% url 'tracker:add_food' %}"
@@ -152,7 +157,8 @@
     document.getElementById("total_calories").innerHTML =
       "<b>" + calories + " Kacl</b>";
 
-    var calPer = (calories / 2000) * 100;
+    var calorie_goal = "{{ calorie_goal|escapejs }}";
+    var calPer = (calories / calorie_goal) * 100;
     document
       .getElementsByClassName("progress-bar")[0]
       .setAttribute("style", "width:" + calPer + "%");
@@ -191,19 +197,22 @@
       },
     });
     window.onload = function () {
-        document.getElementById('update-meal').addEventListener('click', function (event) {
-        event.preventDefault(); // prevent default anchor behavior
+      document
+        .getElementById("update-meal")
+        .addEventListener("click", function (event) {
+          event.preventDefault(); // prevent default anchor behavior
 
-        var selectElement = document.getElementById('food_consumed');
-        var selectedOption = selectElement.options[selectElement.selectedIndex];
-        var foodId = selectedOption.getAttribute('data-id');
+          var selectElement = document.getElementById("food_consumed");
+          var selectedOption =
+            selectElement.options[selectElement.selectedIndex];
+          var foodId = selectedOption.getAttribute("data-id");
 
-        if (foodId) {
+          if (foodId) {
             // set the dynamic URL
-            window.location.href = `/update/${foodId}/`;  
-        } else {
+            window.location.href = `/update/${foodId}/`;
+          } else {
             alert("Please select a meal to update.");
-        }
+          }
         });
     };
   </script>

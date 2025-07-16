@@ -42,6 +42,23 @@ def index(request):
     return render(request, 'tracker/index.html', {'foods': foods, 'consumed_food': consumed_food, 'calorie_goal': calorie_goal})
 
 @login_required(login_url='accounts:login')
+def update_calorie_goal(request):
+    user_goal = User_goal.objects.get(user=request.user)
+    if request.method == "POST":
+
+        try:
+            new_goal = request.POST.get('user_goal')
+            user_goal.user = request.user
+            user_goal.calorie_goal = new_goal
+            user_goal.save()
+
+        except Exception:
+            messages.error(request, 'Try to do with valid values')
+
+    return render(request, 'tracker/update_calorie_goal.html', {'user_goal': user_goal})
+
+
+@login_required(login_url='accounts:login')
 def delete_consume(request,id):
     consumed_food = Consume.objects.get(id=id)
     if request.method == 'POST':
